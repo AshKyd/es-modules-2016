@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>ES2015 Modules - a talk by Ash Kyd</title>
+        <meta name="viewport" content="width=device-width">
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/headjs/1.0.3/head.min.js" integrity="sha384-Gs1DC57G1ZMKS5TP3jyuxLMuvq7OzbjpehQDsGRGS4r31G9NTxjcElmDPFurjos8" crossorigin="anonymous"></script>
+        <script defer src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/js/reveal.js" integrity="sha384-dXLCzxwwRiyMQGqCM4ZYh+EBeUljcSIzlfzfAE97oPKP0q9kEx5NQQah7ZRo9YiG" crossorigin="anonymous"></script>
+        <script src="scripts/index.js" defer></script>
+
+        <link rel="stylesheet" type="text/css" href="styles/style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/reveal.css" integrity="sha384-OCu856CgBUSQ/iWwDsqaWhBbcQgd2cawC2mtkVTd0rtz/q5DnDWwk7TdO4a8e1lY" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/theme/black.css" integrity="sha384-o6pB4CoREmS14q5c9RF/oco7mZrUnWK34n82XsTJzHxa0USTE4TcYAt176usQpMo" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/lib/css/zenburn.min.css" integrity="sha384-8z7qMTus7bTGsunAZLH1WO4AV0+7mx/BaQPsJ59+1F4a7/x9h8ZTVPDjVGJ7IBW9" crossorigin="anonymous">
+        <style type="text/css">
+            body{background:black;}
+        </style>
+
+
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+
+<section id="hello">
+    <h1>ES2015 Modules</h1>
+    <h2>Ash Kyd</h2>
+    <ul class="inline">
+        <li><a href="https://twitter.com/ashkyd">@ashkyd</a></li>
+        <li><a href="https://ash.ms">ash.ms</a></li>
+    </ul>
+    <code style="display:block;text-align:center;"><script>
+    document.write(String(window.location).replace(/https?:\/\//, '').replace(/#.*/,''));
+    </script></code>
+</section>
+<section id="outline">
+    <ul>
+        <li>CommonJS &amp; AMD</li>
+        <li>ES2015 modules!</li>
+        <li>How they differ</li>
+        <li>How to use them today</li>
+    </ul>
+</section>
+<section>
+    <h2>AMD</h2>
+<pre class="">
+define(['jquery'], function($){
+    return function(){};
+});
+</pre>
+<!--
+AMD modules are asynchronous and utilise a callback style approach. This is
+similar to how jsonp works, sending a payload to a named function, except in
+this case the payload specifies a namespace.
+-->
+    <h2>CommonJS</h2>
+<pre>
+var $ = require('jquery');
+module.exports = function(){};
+</pre>
+<!--
+CommonJS was popularised by Node and is a synchronous require statement. Because
+of the synchronous nature of the require call, this is not suitable in browser
+environments, and needs to be compiled/transpiled with something like Webpack
+or Browserify.
+-->
+    <h2>ES2015 Modules</h2>
+<pre>
+import $ from 'jquery';
+export default function(){};
+</pre>
+<!--
+ES2015 modules are not async
+-->
+
+</section>
+<section id="ES2015-simports">
+    <h2>Imports</h2>
+<pre>
+import defaultMember from "module-name";
+import * as name from "module-name";
+import { member } from "module-name";
+import { member as alias } from "module-name";
+import { member1 , member2 } from "module-name";
+import { member1 , member2 as alias2 , [...] } from "module-name";
+import defaultMember, { member [ , [...] ] } from "module-name";
+import defaultMember, * as name from "module-name";
+import "module-name";
+</pre>
+</section>
+<section id="ES2015-exports">
+    <h2>Exports</h2>
+<pre>
+export { name1, name2, …, nameN };
+export { variable1 as name1, variable2 as name2, …, nameN };
+export let name1, name2, …, nameN; // also var
+export let name1 = …, name2 = …, …, nameN; // also var, const
+
+export default expression;
+export default function (…) { … } // also class, function*
+export default function name1(…) { … } // also class, function*
+export { name1 as default, … };
+
+export * from …;
+export { name1, name2, …, nameN } from …;
+export { import1 as name1, import2 as name2, …, nameN } from …;
+</pre>
+</section>
+<section>
+<h2>In the browser</h2>
+<pre>
+&lt;script type="module"&gt;
+</pre>
+<p>But not landed yet!</p>
+</section>
+<section>
+<h2>In the meantime…</h2>
+<p>Several approaches.</p>
+<table>
+<thead>
+</thead>
+<tbody>
+<tr><td>Babel</td><td>Bundle &amp; transpile to ES5</td></tr>
+<tr><td>Rollup</td><td>Resolve imports &amp; bundle ES2015</td></tr>
+<tr><td>SystemJS</td><td>Go nuts and load whatever</td></tr>
+</tbody>
+</table>
+
+</section>
+<section>
+    <h2>Babel</h2>
+    <ul>
+        <li>Converts ES* to ES5</li>
+        <li>Often used with Webpack</li>
+        <li>Wide compatibility</li>
+    </ul>
+<!--
+    Babel is probably the most used ES6 tool of today. Most of you have probably
+    heard of it, but if you haven't it transpiles ES2015 to ES5 which regular
+    browsers can undesrtand. This is awesome if you need to support stuff like
+    IE9, or if you want to use bleeding edge features, but it's still a
+    transpiler so it suffers all the same drawbacks as TypeScript and
+    Coffeescript around build time and debugging.
+    That being said, this is probably the most common choice right now for big
+    projects, and isn't going away any time soon (by design). The babel project
+    plans to stick around as long as the ES spec is in motion.
+-->
+</section>
+<section>
+    <h2>Rollup</h2>
+    <ul>
+        <li>Bundles all imports together</li>
+        <li>Leaves pure ES2015</li>
+        <li>Does one thing well</li>
+    </ul>
+<!--
+    Rollup is an ES2015 module bundler, it takes your ES2015 code and bundles
+    it into the one file leaving the rest of the code untouched. This
+    effectively leaves your beautiful ES2015 code for browsers that can handle
+    it, but with don't have module loading support yet.
+    It's the ultimate "do one thing well" tool, as it doesn't support extraneous
+    features like Babel. It bundles your modules, does a bit of optimisation,
+    and that's it. It's very nice in that regard.
+    It's probably one fo the more forward-thinking tools, because it
+    requires no transpiling or non-standard features. All the code you write is
+    proper gold certified ES6 and will continue working into the future.
+-->
+</section>
+<section>
+    <h2>SystemJS</h2>
+    <ul>
+        <li>Loads all the module formats (ES2015 + NPM)</li>
+        <li>Leaves pure ES2015</li>
+        <li>Based on WhatWG loader spec</li>
+    </ul>
+<!--
+    Best of both worlds, lets you use old style & new style modules without
+    transpiling. Includes an API based on the ES module loading draft and
+    supports async module loading with promises. Of the old gods this aligns
+    it closer to RequireJS than CommonJS in that you can dynamically pull in
+    code when you need it rather than load everything on page load.
+    Like Babel, this is more of a lifestyle choice in that once you start
+    writing SystemJS code you're going to be somewhat stuck with it or at least
+    potentially have a refactor on your hands when the ES spec finalises.
+-->
+</section>
+<!--
+TODO:
+* CommonJS to ES2016 example
+* Rollup example
+* SystemJS loader example
+* Whatever of Node?
+-->
+<section id="libraries">
+    <h2>Useful resources</h2>
+    <table>
+    <thead>
+    </thead>
+    <tbody>
+    <tr><td><strong>MDN</strong></td><td><a href="https://developer.mozilla.org/en/docs/web/javascript/reference/statements/export">export</a> &amp; <a href="https://developer.mozilla.org/en/docs/web/javascript/reference/statements/import">import</a></td></tr>
+    </tbody>
+    </table>
+</section>
+<section id="farewell">
+<h1>ES2015 Modules</h1>
+<h2>Ash Kyd</h2>
+<ul class="inline">
+<li><a href="https://twitter.com/ashkyd">@ashkyd</a></li>
+<li><a href="https://ash.ms">ash.ms</a></li>
+</ul>
+<code style="display:block;text-align:center;"><script>
+document.write(String(window.location).replace(/https?:\/\//, '').replace(/#.*/,''));
+</script></code>
+</section>
+            </div>
+        </div>
+    </body>
+</html>

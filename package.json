@@ -1,0 +1,18 @@
+{
+  "name": "es-modules-2016",
+  "version": "1.0.0",
+  "description": "A talk on ES2015 modules and how to use them in 2016.",
+  "main": "src/index.js",
+  "scripts": {
+    "server": "python -m SimpleHTTPServer"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:AshKyd/es-modules-2016.git"
+  },
+  "author": "Ash Kyd <ash@kyd.com.au>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AshKyd/es-modules-2016/issues"
+  }
+}
