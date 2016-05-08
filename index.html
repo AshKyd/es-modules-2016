@@ -7,12 +7,15 @@
         <meta name="viewport" content="width=device-width">
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/headjs/1.0.3/head.min.js" integrity="sha384-Gs1DC57G1ZMKS5TP3jyuxLMuvq7OzbjpehQDsGRGS4r31G9NTxjcElmDPFurjos8" crossorigin="anonymous"></script>
         <script defer src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/js/reveal.js" integrity="sha384-dXLCzxwwRiyMQGqCM4ZYh+EBeUljcSIzlfzfAE97oPKP0q9kEx5NQQah7ZRo9YiG" crossorigin="anonymous"></script>
-        <script src="scripts/index.js" defer></script>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        <script defer src="scripts/index.js"></script>
+
 
         <link rel="stylesheet" type="text/css" href="styles/style.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/reveal.css" integrity="sha384-OCu856CgBUSQ/iWwDsqaWhBbcQgd2cawC2mtkVTd0rtz/q5DnDWwk7TdO4a8e1lY" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/theme/black.css" integrity="sha384-o6pB4CoREmS14q5c9RF/oco7mZrUnWK34n82XsTJzHxa0USTE4TcYAt176usQpMo" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/lib/css/zenburn.min.css" integrity="sha384-8z7qMTus7bTGsunAZLH1WO4AV0+7mx/BaQPsJ59+1F4a7/x9h8ZTVPDjVGJ7IBW9" crossorigin="anonymous">
+
         <style type="text/css">
             body{background:black;}
         </style>
@@ -42,10 +45,10 @@
         <li>How to use them today</li>
     </ul>
 </section>
-<section>
+<section id="modules-througout-time">
     <h2>AMD</h2>
 <pre class="">
-define(['jquery'], function($){
+define('myModule', ['jquery'], function($){
     return function(){};
 });
 </pre>
@@ -54,40 +57,31 @@ AMD modules are asynchronous and utilise a callback style approach. This is
 similar to how jsonp works, sending a payload to a named function, except in
 this case the payload specifies a namespace.
 -->
+<div class="fragment">
     <h2>CommonJS</h2>
 <pre>
 var $ = require('jquery');
 module.exports = function(){};
 </pre>
+</div>
+
+<div class="fragment">
 <!--
 CommonJS was popularised by Node and is a synchronous require statement. Because
 of the synchronous nature of the require call, this is not suitable in browser
 environments, and needs to be compiled/transpiled with something like Webpack
 or Browserify.
 -->
-    <h2>ES2015 Modules</h2>
+    <h2>ES Modules</h2>
 <pre>
 import $ from 'jquery';
 export default function(){};
 </pre>
+</div>
 <!--
 ES2015 modules are not async
 -->
 
-</section>
-<section id="ES2015-simports">
-    <h2>Imports</h2>
-<pre>
-import defaultMember from "module-name";
-import * as name from "module-name";
-import { member } from "module-name";
-import { member as alias } from "module-name";
-import { member1 , member2 } from "module-name";
-import { member1 , member2 as alias2 , [...] } from "module-name";
-import defaultMember, { member [ , [...] ] } from "module-name";
-import defaultMember, * as name from "module-name";
-import "module-name";
-</pre>
 </section>
 <section id="ES2015-exports">
     <h2>Exports</h2>
@@ -107,12 +101,26 @@ export { name1, name2, …, nameN } from …;
 export { import1 as name1, import2 as name2, …, nameN } from …;
 </pre>
 </section>
+<section id="ES2015-simports">
+    <h2>Imports</h2>
+<pre>
+import defaultMember from "module-name";
+import * as name from "module-name";
+import { member } from "module-name";
+import { member as alias } from "module-name";
+import { member1 , member2 } from "module-name";
+import { member1 , member2 as alias2 , [...] } from "module-name";
+import defaultMember, { member [ , [...] ] } from "module-name";
+import defaultMember, * as name from "module-name";
+import "module-name";
+</pre>
+</section>
 <section>
 <h2>In the browser</h2>
 <pre>
 &lt;script type="module"&gt;
 </pre>
-<p>But not landed yet!</p>
+<p class="fragment">But not landed yet! D:</p>
 </section>
 <section>
 <h2>In the meantime…</h2>
@@ -121,7 +129,7 @@ export { import1 as name1, import2 as name2, …, nameN } from …;
 <thead>
 </thead>
 <tbody>
-<tr><td>Babel</td><td>Bundle &amp; transpile to ES5</td></tr>
+<tr><td>Babel</td><td>Transpile to CommonJS</td></tr>
 <tr><td>Rollup</td><td>Resolve imports &amp; bundle ES2015</td></tr>
 <tr><td>SystemJS</td><td>Go nuts and load whatever</td></tr>
 </tbody>
@@ -168,15 +176,15 @@ export { import1 as name1, import2 as name2, …, nameN } from …;
 -->
 </section>
 <section>
-    <h2>SystemJS</h2>
+    <h2>SystemJS + JSPM</h2>
     <ul>
-        <li>Loads all the module formats (ES2015 + NPM)</li>
-        <li>Leaves pure ES2015</li>
+        <li>Loads all the module formats (ES, CommonJS)</li>
         <li>Based on WhatWG loader spec</li>
+        <li>Mandatory transpile :(</li>
     </ul>
 <!--
-    Best of both worlds, lets you use old style & new style modules without
-    transpiling. Includes an API based on the ES module loading draft and
+    Best of both worlds, lets you use old style & new style modules with the one
+    loader. Includes an API based on the ES module loading draft and
     supports async module loading with promises. Of the old gods this aligns
     it closer to RequireJS than CommonJS in that you can dynamically pull in
     code when you need it rather than load everything on page load.
@@ -185,13 +193,110 @@ export { import1 as name1, import2 as name2, …, nameN } from …;
     potentially have a refactor on your hands when the ES spec finalises.
 -->
 </section>
-<!--
-TODO:
-* CommonJS to ES2016 example
-* Rollup example
-* SystemJS loader example
-* Whatever of Node?
--->
+<section>
+    <section id="demo1">
+        <h2>Let's convert a CommonJS module</h2>
+        <p>Live-coding tiem! Press ⌘-tab to continue.</p>
+    </section>
+    <section id="demo1-cheat-sheet">
+        <h2>Cheat sheet for those playing at home…</h2>
+    <pre><code class="bash">$ cd demos/commonjs/
+$ cat *.js
+$ node index.js
+$ cd ../es2015/
+$ cat *.js
+$ rollup index.js | node
+    </code></pre>
+    </section>
+</section>
+<section id="demo1-roundup">
+    <h2>Some things to note</h2>
+    <ul>
+        <li>Export pretty much anything</li>
+        <li>Multiple exports per file without objects</li>
+        <li>Named functions work bestest</li>
+    </ul>
+</section>
+<section id="systemjs">
+    <h2>Let's play with SystemJS</h2>
+<pre><code>var System = require('systemjs');
+System.import('./module.js')
+    .then(phrases => phrases.hello('BrisJS') )
+    .catch(error => console.log('oh dear') );
+</code></pre>
+</section>
+<section>
+    <section id="demo2">
+        <h2>See SystemJS in action</h2>
+        <p>Press ⌘-tab to continue.</p>
+    </section>
+    <section id="demo2-cheat-sheet">
+        <h2>Cheat sheet for those playing at home…</h2>
+    <pre><code class="bash">$ cd demos/systemjs/
+$ cat *.js
+$ node index.js
+    </code></pre>
+    </section>
+</section>
+<section id="jspm">
+    <h2>jspm.io</h2>
+<pre><code>jspm init
+jspm install npm:underscore
+</code></pre>
+<p class="fragment">Suddenly, a wild <code>import 'underscore'</code> appears</p>
+</section>
+<section id="prepublish">
+    <h2>Distributing an ES module</h2>
+    <p>Bundle before publish</p>
+<pre><code>
+{
+    "main": "bundle.js",
+    "scripts": {
+        "prepublish": "rollup index.js > bundle.js"
+    }
+}
+</code></pre>
+</section>
+<section id="jsnextmain">
+    <h2>Make it native</h2>
+    <p>~proposed~ feature</p>
+<pre><code>{
+    "main": "bundle.js",
+    "jsnext:main": "index.js",
+    "scripts": {
+        "prepublish": "rollup index.js > bundle.js"
+    }
+}
+</code></pre>
+</section>
+<section>
+    <section id="node">
+        <h2>But what of Node modules?</h2>
+    </section>
+    <section>
+        <img src="images/node-tweets/01-brianleroux-cowpaths.png"
+        alt="The ES* modules vs CJS modules thing shows that TC39 got it wrong. Time to get back to the drawing board and have a look at the cowpaths. - @brianleroux"
+        >
+    </section>
+    <section>
+        <img src="images/node-tweets/02-rvagg-biggest-ecosystem.png"
+        alt="This is exactly my critique. ES modules bear no similarity to prior art, particularly the biggest module ecosystem! - @rvagg"
+        >
+    </section>
+    <section>
+        <img src="images/node-tweets/03-richharris-rebuttal.png"
+        alt="Gah. The 'prior art' was merely the art of the possible. ES modules are *so much* better suited to the web (where CommonJS means size and perf penalties). Painful to see people advocating that we pave cowpaths that go in the wrong direction. - @rich_harris"
+        >
+    </section>
+    <section>
+        <h2>Oh nodes!</h2>
+        <p>Not coming any time soon.</p>
+        <p>A lot of discussion going on, &amp; work to be done.</p>
+        <p>Meantime, you can still use SystemJS</p>
+    </section>
+</section>
+
+
 <section id="libraries">
     <h2>Useful resources</h2>
     <table>
@@ -199,6 +304,10 @@ TODO:
     </thead>
     <tbody>
     <tr><td><strong>MDN</strong></td><td><a href="https://developer.mozilla.org/en/docs/web/javascript/reference/statements/export">export</a> &amp; <a href="https://developer.mozilla.org/en/docs/web/javascript/reference/statements/import">import</a></td></tr>
+    <tr><td><strong>Rollup</strong></td><td><a href="http://rollupjs.org">rollup interactive demo</a></td></tr>
+    <tr><td><strong>jsnext:main</strong></td><td><a href="https://github.com/rollup/rollup/wiki/jsnext:main">modest proposal</a></td></tr>
+    <tr><td><strong>jspm</strong></td><td><a href="http://jspm.io/">jspm.io</a></td></tr>
+
     </tbody>
     </table>
 </section>
