@@ -1,4 +1,4 @@
-Making games for the Web
+ES* Modules in 2016
 ========================
 
-* [Road Blocks](http://spacekidgames.com/road-blocks/)
+A talk on ES2015 modules and how to use them in 2016.
