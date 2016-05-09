@@ -83,7 +83,7 @@ ES2015 modules are not async
 -->
 
 </section>
-<section id="ES2015-exports">
+<section id="es2015-exports">
     <h2>Exports</h2>
 <pre>
 export { name1, name2, …, nameN };
@@ -101,18 +101,26 @@ export { name1, name2, …, nameN } from …;
 export { import1 as name1, import2 as name2, …, nameN } from …;
 </pre>
 </section>
-<section id="ES2015-simports">
+<!--
+There are a bunch of export types as you can see here from the examples
+One of the biggest differences that I've noticed is you can have multiple
+exports. CommonJS as with functions will only ever return one output. It may be
+an object, but it's still one thing.
+ES modules can export any numberr of things, and these things can be imported
+to your code separately.
+-->
+<section id="es2015-simports">
     <h2>Imports</h2>
 <pre>
-import defaultMember from "module-name";
+import "module-name";
 import * as name from "module-name";
+import defaultMember from "module-name";
 import { member } from "module-name";
 import { member as alias } from "module-name";
 import { member1 , member2 } from "module-name";
 import { member1 , member2 as alias2 , [...] } from "module-name";
 import defaultMember, { member [ , [...] ] } from "module-name";
 import defaultMember, * as name from "module-name";
-import "module-name";
 </pre>
 </section>
 <section>
@@ -122,6 +130,9 @@ import "module-name";
 </pre>
 <p class="fragment">But not landed yet! D:</p>
 </section>
+<!--
+So that's neat, how do I use this?
+-->
 <section>
 <h2>In the meantime…</h2>
 <p>Several approaches.</p>
@@ -225,6 +236,19 @@ System.import('./module.js')
     .catch(error => console.log('oh dear') );
 </code></pre>
 </section>
+<!--
+The other interesting approach is SystemJS which is based on the ES loader
+polyfill which attempts to implement the WahtWG loader spec. That said, this
+is way more than a polyfill, it's a thing that stands on its own, and lets you
+load pretty much any type of module with an async loading approach.
+This is especially useful for on the client where you might need to lazy load
+bits of your app as you go, and was a constant problem at my old job where we
+had a big ol' monolithic codebase and wanted to add heavy new features.
+As you can see, it's a code-based solution, which uses promises to call back
+when the module is loaded. In this exmaple I'm loading the module and
+then printing the hello world from the library that was returned. I've also
+added a catch because promises swallow errors and can be paiiinful to debug.
+-->
 <section>
     <section id="demo2">
         <h2>See SystemJS in action</h2>
@@ -245,6 +269,15 @@ jspm install npm:underscore
 </code></pre>
 <p class="fragment">Suddenly, a wild <code>import 'underscore'</code> appears</p>
 </section>
+<!--
+JSPM is another interesting development, and is basically a wrapper on top of
+SystemJS. Essentially it wraps NPM and GitHub to provide an ES6 friendly package
+manager independent of NPM itself. I believe Aurelia uses JSPM for package
+management.
+I'm not sure I'm a big fan of this to be honest, because it sort of
+feels a bit like a duplication of effort but let's have a poke around a JSPM
+project and see what it does.
+-->
 <section id="prepublish">
     <h2>Distributing an ES module</h2>
     <p>Bundle before publish</p>
@@ -257,6 +290,18 @@ jspm install npm:underscore
 }
 </code></pre>
 </section>
+<!--
+So that's all well and good, but how do ES modules fit into the current ecosystem.
+Answer: we're still back to precompiling unfortunately. CommonJS is the standard
+for NPM modules, so we can use our favourite transpiler (babel, rollup, webpack
+or whatever to distribute a compatible ES5/CommonJS module that the rest of the)
+world can consume.
+You can pretty easily do this by adding a prepublish script to your package.json
+which builds the CommonJS prior to publication. By setting the "main" attribute
+to the compiled version, anything that pulls this module in will use the CJS
+version by default.
+Seems like a bit of a waste? Kinda is. But...
+-->
 <section id="jsnextmain">
     <h2>Make it native</h2>
     <p>~proposed~ feature</p>
@@ -269,9 +314,24 @@ jspm install npm:underscore
 }
 </code></pre>
 </section>
+<!--
+The jsnext:main property is a proposal championed by Rich Harris and Rollup,
+which essentially supersedes the main property in your package.json. The idea is
+that any compatible bundlers or engines can use the native source code rather
+than the tranpiled source code which gives efficiency gains amongst other
+things.
+Worth nothing is that I'm not sure how widely this is supported. I know it's
+supported in rollup, and there's been talk of it landing elsewhere too, but for
+now it remains very much a transitional proposal so your favourite tool of
+choice may ignore it.
+It's also worth noting that even though not many utilities support this, not
+many utils can utilise ES modules either so even in your Babel projects you're
+going to be transpiling to CommonJS modules anyway. So this is an option.
+-->
 <section>
     <section id="node">
         <h2>But what of Node modules?</h2>
+        <p>When can we expect a fully ES modulised node?</p>
     </section>
     <section>
         <img src="images/node-tweets/01-brianleroux-cowpaths.png"
@@ -292,11 +352,39 @@ jspm install npm:underscore
         <h2>Oh nodes!</h2>
         <p>Not coming any time soon.</p>
         <p>A lot of discussion going on, &amp; work to be done.</p>
+        <p>V8 is getting modules, but still needs the Loader spec to land.</p>
         <p>Meantime, you can still use SystemJS</p>
     </section>
 </section>
-
-
+<!--
+So I've spoken very generally about ES modules, transpilers and bundlers, but
+what about Node? Is there a native implementation in the pipeline?
+The short answer is maybe, but the longer answer is that it's a contentious
+issue and there's a lot of discussion going on about it.
+I saw this tweet stream go through my window the other day and I thought it
+highlighted various positions on the issue.
+There's a bunch of issues around the Node implementation of ES modules, which I
+haven't linked to from here because it feels a bit all over the place at the
+moment. That said, V8 is getting module support, so eventually Node will have
+something to  get started with.
+-->
+<section id="soooo">
+    <h3>Soooo</h3>
+    <p>Make a start! The tools are improving.<p>
+    <p>Many of today's solutions transpile to CommonJS anyway</p>
+    <p>You can get client-side performance benefits &amp; native ES6 with Rollup</p>
+</section>
+<!--
+So that's pretty much it. What's the take-home from this?
+Firstly definitely get started with publishing ES modules today.
+Many of the big players are using them already (Aurelia I believe) so you don't
+have to jump through hoops to get going. For those which aren't, you can
+transpile for compatibility (if you care to). Keeping in mind most ES6 is
+transpiled today anyway so this isn't so much of a big deal.
+Overall, we're Javascript developers. We're used to the new big thing coming
+in and pulling the rug out from under us. Thankfully as an ES standard, the
+replacement is in it for the long haul.
+-->
 <section id="libraries">
     <h2>Useful resources</h2>
     <table>
@@ -307,7 +395,6 @@ jspm install npm:underscore
     <tr><td><strong>Rollup</strong></td><td><a href="http://rollupjs.org">rollup interactive demo</a></td></tr>
     <tr><td><strong>jsnext:main</strong></td><td><a href="https://github.com/rollup/rollup/wiki/jsnext:main">modest proposal</a></td></tr>
     <tr><td><strong>jspm</strong></td><td><a href="http://jspm.io/">jspm.io</a></td></tr>
-
     </tbody>
     </table>
 </section>
